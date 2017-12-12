@@ -6,10 +6,13 @@ function Controls() {
   this.states = { 'left': false, 'right': false, 'forward': false, 'backward': false };
   document.addEventListener('keydown', this.onKey.bind(this, true), false);
   document.addEventListener('keyup', this.onKey.bind(this, false), false);
-  document.addEventListener('touchstart', this.onTouch.bind(this), false);
-  document.addEventListener('touchmove', this.onTouch.bind(this), false);
-  document.addEventListener('touchend', this.onTouchEnd.bind(this), false);
 }
+
+Controls.prototype.onTouchEnd = function(e) {
+  this.states = { 'left': false, 'right': false, 'forward': false, 'backward': false };
+  e.preventDefault();
+  e.stopPropagation();
+};
 
 Controls.prototype.onKey = function(val, e) {
   var state = this.codes[e.keyCode];
