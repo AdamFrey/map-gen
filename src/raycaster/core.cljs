@@ -11,41 +11,41 @@
 (defonce app-state (atom {:text "Hello world!"}))
 
 (defn- camera
-  [canvas resolution focal-length]
-  (let [width (canvas 0)]
-    {:focal-length focal-length
-     :width width
-     :height (canvas 1)
-     :resolution resolution
-     :spacing (/ width resolution)
-     :range 14
-     :light-range 10
-     }))
+  [[width height] resolution focal-length]
+  {:focal-length focal-length
+   :width width
+   :height height
+   :resolution resolution
+   :spacing (/ width resolution)
+   :range 14
+   :light-range 10
+   })
 
 (defn setup [camera]
                                         ; Set frame rate to 30 frames per second.
-  (q/frame-rate 30)
+  (q/frame-rate 60)
                                         ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
                                         ; setup function returns initial state. It contains
                                         ; circle color and position.
   {:color 0
    :angle 0
-   :map [[0 0 0 0 0 0 0]
+   :map [[0 0 0 0 0 0 1]
+         [0 0 0 0 0 0 0]
+         [0 1 0 0 0 0 0]
+         [0 0 0 0 0 1 0]
          [0 0 0 0 0 0 0]
          [0 0 0 0 0 0 0]
-         [0 0 0 0 0 0 0]
-         [0 0 0 0 0 0 0]
-         [0 0 0 0 0 0 0]
-         [0 0 0 1 0 0 0]]
+         [0 0 0 1 1 1 0]]
    :camera camera
-   :player {:coordinates [3.5 2.5]
+   :player {:coordinates [3.5 3.5]
             :direction 0
             :range 10}})
 
 (defn update-state [state] ; Update sketch state by changing circle color and position.
   (-> state
-      (update :color #(mod (+ % 10.7) 255))))
+      (update-in [:player :direction] #(+ % 0.005))
+      #_(update :color #(mod (+ % 10.7) 255))))
 
 (defn inspect
   [m sin cos step shift-x shift-y distance offset]
@@ -87,13 +87,13 @@
       (if (pos? (:height next-step))
         next-step
         (recur m rng sin cos next-step)))
-    {:height 0 :distance 1000}))
+    {:height 2 :distance 1000}))
 
 (defn cast
-  [m point angle rng]
+  [m [x y] angle rng]
   (let [sin (Math/sin angle)
         cos (Math/cos angle)]
-    (ray m rng sin cos {:x (point 0) :y (point 1)})))
+    (ray m rng sin cos {:x x :y y})))
 
 (defn project
   [camera height angle distance]
@@ -115,6 +115,7 @@
   (q/background 220) ; Clear the sketch by filling it with light-grey color.
 
   (q/fill (:color state) 100 100)
+  (q/no-stroke)
 
   (let [spacing (get-in state [:camera :spacing])
         resolution (get-in state [:camera :resolution])]
@@ -127,7 +128,7 @@
         (draw-column state (state :camera) (state :map) column ray angle)))))
 
 (let [canvas [640 480]
-      c (camera canvas 200 0.8)]
+      c (camera canvas 320 0.8)]
   (q/defsketch my-sketch
     :title "You spin my circle right round"
     :host "display"
