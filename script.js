@@ -121,7 +121,6 @@ Map.prototype.cast = function(point, angle, range) {
 
 Map.prototype.update = function(seconds) {
   if (this.light > 0) this.light = Math.max(this.light - 10 * seconds, 0);
-  else if (Math.random() * 5 < seconds) this.light = 2;
 };
 
 function Camera(canvas, resolution, focalLength) {
