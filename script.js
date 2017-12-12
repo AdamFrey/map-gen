@@ -200,8 +200,6 @@ Camera.prototype.drawColumn = function(column, ray, angle, map) {
 
   for (var s = ray.length - 1; s >= 0; s--) {
     var step = ray[s];
-    var rainDrops = Math.pow(Math.random(), 3) * s;
-    var rain = (rainDrops > 0) && this.project(0.1, angle, step.distance);
 
     if (s === hit) {
       var textureX = Math.floor(texture.width * step.offset);
@@ -217,7 +215,6 @@ Camera.prototype.drawColumn = function(column, ray, angle, map) {
 
     ctx.fillStyle = '#ffffff';
     ctx.globalAlpha = 0.15;
-    while (--rainDrops > 0) ctx.fillRect(left, Math.random() * rain.top, 1, rain.height);
   }
 };
 
