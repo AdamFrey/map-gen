@@ -102,25 +102,25 @@
   (q/fill 100 100 100)
   (q/no-stroke)
 
-(let [spacing (get-in state [:camera :spacing])
-      resolution (get-in state [:camera :resolution])]
-  (doseq [column (range resolution)]
-    (let [x (- (/ column resolution) 0.5)
-          angle (Math/atan2 x (get-in state [:camera :focal-length]))
-          ray (cast (state :map) (get-in state [:player :coordinates])
-                    (+ angle (get-in state [:player :direction]))
-                    (get-in state [:camera :range]))]
-      (draw-column state (state :camera) (state :map) column ray angle)))))
+  (let [spacing (get-in state [:camera :spacing])
+        resolution (get-in state [:camera :resolution])]
+    (doseq [column (range resolution)]
+      (let [x (- (/ column resolution) 0.5)
+            angle (Math/atan2 x (get-in state [:camera :focal-length]))
+            ray (cast (state :map) (get-in state [:player :coordinates])
+                      (+ angle (get-in state [:player :direction]))
+                      (get-in state [:camera :range]))]
+        (draw-column state (state :camera) (state :map) column ray angle)))))
 
 (let [canvas [320 240]
       c (camera canvas 320 0.8)]
 
-(q/defsketch my-sketch
-  :title "You spin my circle right round"
-  :host "display"
-  :size [(c :width) (c :height)]
-  :setup (partial setup c)
-  :update update-state
-  :draw draw-state
-  :features [:keep-on-top]
-  :middleware [m/fun-mode]))
+  (q/defsketch my-sketch
+    :title "You spin my circle right round"
+    :host "display"
+    :size [(c :width) (c :height)]
+    :setup (partial setup c)
+    :update update-state
+    :draw draw-state
+    :features [:keep-on-top]
+    :middleware [m/fun-mode]))
