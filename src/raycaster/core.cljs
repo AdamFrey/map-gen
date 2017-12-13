@@ -87,7 +87,7 @@
       (if (pos? (:height next-step))
         next-step
         (recur m rng sin cos next-step)))
-    {:height 2 :distance 1000}))
+    {:height 4 :distance 1000}))
 
 (defn cast
   [m [x y] angle rng]
@@ -127,7 +127,7 @@
                       (get-in state [:camera :range]))]
         (draw-column state (state :camera) (state :map) column ray angle)))))
 
-(let [canvas [640 480]
+(let [canvas [320 240]
       c (camera canvas 320 0.8)]
   (q/defsketch my-sketch
     :title "You spin my circle right round"
