@@ -18,15 +18,15 @@
 (defn setup [camera]
   (q/frame-rate 60)
   (q/color-mode :hsb)
-  {:map [[1 1 1 1 1 1 1]
-         [1 0 0 0 0 0 1]
-         [1 1 0 0 0 0 1]
-         [1 1 0 0 0 1 1]
-         [1 0 0 0 0 1 1]
-         [1 0 0 0 0 0 1]
-         [1 1 1 1 1 1 1]]
+  {:map [[1 1 0 1 0 1 1 1]
+         [1 0 0 0 0 0 0 1]
+         [1 1 0 0 0 0 0 1]
+         [1 1 0 0 0 0 1 1]
+         [1 0 0 0 0 0 1 1]
+         [1 0 0 0 0 0 0 1]
+         [1 1 1 1 1 1 1 1]]
    :camera camera
-   :player {:coordinates [3.5 3.5]
+   :player {:coordinates [4 4]
             :direction 0}})
 
 (defn update-state [state]
