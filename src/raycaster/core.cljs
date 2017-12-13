@@ -73,7 +73,7 @@
       (if (pos? (:height next-step))
         next-step
         (recur m rng sin cos next-step)))
-    {:height 4 :distance 1000}))
+    {:height 0 :distance 1000}))
 
 (defn cast
   [m [x y] angle rng]
@@ -95,13 +95,19 @@
   [state camera m column ray angle]
   (let [left (* column (:spacing camera))
         wall (project camera (ray :height) angle (ray :distance))]
-    (q/fill 160 50 (:height wall))
+    (q/fill 0 0 (- (:height wall) 20))
     (q/rect left (:top wall) (:spacing camera) (:height wall))))
 
 (defn draw-state [state]
-  (q/background 220)
+  ; Draw sky
   (q/no-stroke)
+  (q/background 0 0 160)
 
+  ; Draw Floor
+  (q/fill 0 0 140)
+  (q/rect 0 120 320 240)
+
+  ; Draw walls
   (let [spacing (get-in state [:camera :spacing])
         resolution (get-in state [:camera :resolution])]
     (doseq [column (range resolution)]
@@ -111,6 +117,7 @@
                       (+ angle (get-in state [:player :direction]))
                       (get-in state [:camera :range]))]
         (draw-column state (state :camera) (state :map) column ray angle)))))
+
 
 (let [canvas [320 240]
       c (camera canvas 320 0.8)]
