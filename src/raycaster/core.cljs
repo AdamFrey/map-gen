@@ -4,12 +4,6 @@
 
 (enable-console-print!)
 
-(println "This text is printed from src/raycaster/core.cljs. Go ahead and edit it and see reloading in action.")
-
-;; define your app data so that it doesn't get over-written on reload
-
-(defonce app-state (atom {:text "Hello world!"}))
-
 (defn- camera
   [[width height] resolution focal-length]
   {:focal-length focal-length
@@ -22,30 +16,22 @@
    })
 
 (defn setup [camera]
-                                        ; Set frame rate to 30 frames per second.
   (q/frame-rate 60)
-                                        ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
-                                        ; setup function returns initial state. It contains
-                                        ; circle color and position.
-  {:color 0
-   :angle 0
-   :map [[0 0 0 0 0 0 1]
-         [0 0 0 0 0 0 0]
-         [0 1 0 0 0 0 0]
-         [0 0 0 0 0 1 0]
-         [0 0 0 0 0 0 0]
-         [0 0 0 0 0 0 0]
-         [0 0 0 1 1 1 0]]
+  {:map [[1 1 1 1 1 1 1]
+         [1 0 0 0 0 0 1]
+         [1 1 0 0 0 0 1]
+         [1 1 0 0 0 1 1]
+         [1 0 0 0 0 1 1]
+         [1 0 0 0 0 0 1]
+         [1 1 1 1 1 1 1]]
    :camera camera
    :player {:coordinates [3.5 3.5]
-            :direction 0
-            :range 10}})
+            :direction 0}})
 
-(defn update-state [state] ; Update sketch state by changing circle color and position.
+(defn update-state [state]
   (-> state
-      (update-in [:player :direction] #(+ % 0.005))
-      #_(update :color #(mod (+ % 10.7) 255))))
+      (update-in [:player :direction] #(+ % 0.005))))
 
 (defn inspect
   [m sin cos step shift-x shift-y distance offset]
@@ -112,40 +98,29 @@
     (q/rect left (:top wall) (:spacing camera) (:height wall))))
 
 (defn draw-state [state]
-  (q/background 220) ; Clear the sketch by filling it with light-grey color.
-
-  (q/fill (:color state) 100 100)
+  (q/background 220)
+  (q/fill 100 100 100)
   (q/no-stroke)
 
-  (let [spacing (get-in state [:camera :spacing])
-        resolution (get-in state [:camera :resolution])]
-    (doseq [column (range resolution)]
-      (let [x (- (/ column resolution) 0.5)
-            angle (Math/atan2 x (get-in state [:camera :focal-length]))
-            ray (cast (state :map) (get-in state [:player :coordinates])
-                      (+ angle (get-in state [:player :direction]))
-                      (get-in state [:camera :range]))]
-        (draw-column state (state :camera) (state :map) column ray angle)))))
+(let [spacing (get-in state [:camera :spacing])
+      resolution (get-in state [:camera :resolution])]
+  (doseq [column (range resolution)]
+    (let [x (- (/ column resolution) 0.5)
+          angle (Math/atan2 x (get-in state [:camera :focal-length]))
+          ray (cast (state :map) (get-in state [:player :coordinates])
+                    (+ angle (get-in state [:player :direction]))
+                    (get-in state [:camera :range]))]
+      (draw-column state (state :camera) (state :map) column ray angle)))))
 
 (let [canvas [320 240]
       c (camera canvas 320 0.8)]
-  (q/defsketch my-sketch
-    :title "You spin my circle right round"
-    :host "display"
-    :size [(c :width) (c :height)]
-                                        ; setup function called only once, during sketch initialization.
-    :setup (partial setup c)
-                                        ; update-state is called on each iteration before draw-state.
-    :update update-state
-    :draw draw-state
-    :features [:keep-on-top]
-                                        ; This sketch uses functional-mode middleware.
-                                        ; Check quil wiki for more info about middlewares and particularly
-                                        ; fun-mode.
-    :middleware [m/fun-mode]))
 
-(defn on-js-reload []
-  ;; optionally touch your app-state to force rerendering depending on
-  ;; your application
-  ;; (swap! app-state update-in [:__figwheel_counter] inc)
-  )
+(q/defsketch my-sketch
+  :title "You spin my circle right round"
+  :host "display"
+  :size [(c :width) (c :height)]
+  :setup (partial setup c)
+  :update update-state
+  :draw draw-state
+  :features [:keep-on-top]
+  :middleware [m/fun-mode]))
