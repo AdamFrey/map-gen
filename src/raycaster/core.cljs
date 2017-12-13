@@ -95,6 +95,7 @@
   [state camera m column ray angle]
   (let [left (* column (:spacing camera))
         wall (project camera (ray :height) angle (ray :distance))]
+    (q/fill 100 100 (:height wall))
     (q/rect left (:top wall) (:spacing camera) (:height wall))))
 
 (defn draw-state [state]
