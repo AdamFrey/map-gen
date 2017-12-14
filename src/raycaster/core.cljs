@@ -95,16 +95,16 @@
   (let [left (* column (:spacing camera))
         wall (project camera (ray :height) angle (ray :distance))
         brightness (:height wall)]
-    (q/fill 0 0 brightness)
+    (q/fill 90 80 brightness)
     (q/rect left (:top wall) (:spacing camera) (:height wall))))
 
 (defn draw-state [state]
   ; Draw background
   (q/no-stroke)
-  (q/background 140 100 200)
+  (q/background 140 100 255)
 
   ; Draw Floor
-  (q/fill 0 0 0)
+  (q/fill 40 100 60)
   (q/rect 0 120 320 240)
 
   ; Draw walls
