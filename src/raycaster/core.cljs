@@ -30,8 +30,7 @@
             :direction 0}})
 
 (defn update-state [state]
-  (-> state
-      (update-in [:player :direction] #(+ % 0.005))))
+  state)
 
 (defn inspect
   [m sin cos step shift-x shift-y distance offset]
@@ -118,6 +117,11 @@
                       (get-in state [:camera :range]))]
         (draw-column state (state :camera) (state :map) column ray angle)))))
 
+(defn key-pressed [state event]
+  (case (:key event)
+    (:a :left) (update-in state [:player :direction] #(- % 0.05))
+    (:d :right) (update-in state [:player :direction] #(+ % 0.05))
+    state))
 
 (let [canvas [320 240]
       c (camera canvas 320 0.8)]
@@ -128,6 +132,7 @@
     :size [(c :width) (c :height)]
     :setup (partial setup c)
     :update update-state
+    :key-pressed key-pressed
     :draw draw-state
     :features [:keep-on-top]
     :middleware [m/fun-mode]))
