@@ -121,10 +121,19 @@
   [state distance]
   (let [coordinates (get-in state [:player :coordinates])
         direction (get-in state [:player :direction])
+        map (get-in state [:map])
+        curr-x (first coordinates)
+        curr-y (nth coordinates 1)
         dx (* distance (Math/cos direction))
         dy (* distance (Math/sin direction))
-        new-coordinates [(+ (first coordinates) dx) (+ (nth coordinates 1) dy)]]
-        (assoc-in state [:player :coordinates] new-coordinates)))
+        new-x (if (<= (get-in map [(+ curr-x dx) curr-y]) 0)
+                 (+ curr-x dx)
+                 curr-x)
+        new-y (if (<= (get-in map [curr-x (+ curr-y dy)]) 0)
+                 (+ curr-y dy)
+                 curr-y)]
+
+        (assoc-in state [:player :coordinates] [new-x new-y])))
 
 (defn key-pressed [state event]
   (case (:key event)
