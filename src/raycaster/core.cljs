@@ -117,9 +117,20 @@
                       (get-in state [:camera :range]))]
         (draw-column state (state :camera) (state :map) column ray angle)))))
 
+(defn walk
+  [state distance]
+  (let [coordinates (get-in state [:player :coordinates])
+        direction (get-in state [:player :direction])
+        dx (* distance (Math/cos direction))
+        dy (* distance (Math/sin direction))
+        new-coordinates [(+ (first coordinates) dx) (+ (nth coordinates 1) dy)]]
+        (assoc-in state [:player :coordinates] new-coordinates)))
+
 (defn key-pressed [state event]
   (case (:key event)
+    (:w :up) (walk state 0.05)
     (:a :left) (update-in state [:player :direction] #(- % 0.05))
+    (:s :down) (walk state -1)
     (:d :right) (update-in state [:player :direction] #(+ % 0.05))
     state))
 
