@@ -16,15 +16,32 @@
    })
 
 (defn setup [camera]
-  (q/frame-rate 60)
+  (q/frame-rate 24)
   (q/color-mode :hsb)
-  {:map [[1 1 0 1 0 1 1 1]
-         [1 0 0 0 0 0 0 1]
-         [1 1 0 0 0 0 0 1]
-         [1 1 0 0 0 0 1 1]
-         [1 0 0 0 0 0 1 1]
-         [1 0 0 0 0 0 0 1]
-         [1 1 1 0 0 1 1 1]]
+  {:map  [[1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
+          [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1]
+          [1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1]
+          [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 0 0 0 0 0 0 1 1 1 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 0 0 0 0 0 0 1 1 1 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 0 0 0 0 0 0 1 1 1 0 0 1 1 1 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1]
+          [1 0 0 0 0 0 0 0 0 1 1 1 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 0 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 0 0 1 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 1]
+          [1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 1]
+          [1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1]
+          [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1]
+          [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]]
    :camera camera
    :player {:coordinates [4 4]
             :direction 0}})
@@ -93,18 +110,19 @@
 (defn draw-column
   [state camera m column ray angle]
   (let [left (* column (:spacing camera))
-        wall (project camera (ray :height) angle (ray :distance))]
-    (q/fill 0 0 (- (:height wall) 20))
+        wall (project camera (ray :height) angle (ray :distance))
+        brightness (:height wall)]
+    (q/fill 0 0 brightness)
     (q/rect left (:top wall) (:spacing camera) (:height wall))))
 
 (defn draw-state [state]
-  ; Draw sky
+  ; Draw background
   (q/no-stroke)
-  (q/background 0 0 160)
+  (q/background 0 0 0)
 
-  ; Draw Floor
-  (q/fill 0 0 140)
-  (q/rect 0 120 320 240)
+  ; ; Draw Floor
+  ; (q/fill 0 0 140)
+  ; (q/rect 0 120 320 240)
 
   ; Draw walls
   (let [spacing (get-in state [:camera :spacing])
@@ -144,7 +162,7 @@
     state))
 
 (let [canvas [320 240]
-      c (camera canvas 320 0.8)]
+      c (camera canvas 64 0.8)]
 
   (q/defsketch my-sketch
     :title "You spin my circle right round"
