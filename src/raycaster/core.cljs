@@ -138,9 +138,9 @@
 
 (defn key-pressed [state event]
   (case (:key event)
-    (:w :up) (walk state 0.5)
+    (:w :up) (walk state 0.05)
     (:a :left) (update-in state [:player :direction] #(- % 0.05))
-    (:s :down) (walk state -0.5)
+    (:s :down) (walk state -0.05)
     (:d :right) (update-in state [:player :direction] #(+ % 0.05))
     state))
 
