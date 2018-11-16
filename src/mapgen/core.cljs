@@ -21,10 +21,15 @@
          (range size) (repeat size (range size)))))
 
 (defn setup [camera]
-  (q/frame-rate 24)
+  (q/frame-rate 1)
   (q/color-mode :hsb)
   {:map (make-board 15)
-   :images (q/load-image "assets/water.gif")
+   :images {:grass (q/load-image "assets/grass.gif")
+            :water (q/load-image "assets/water.gif")
+            :water-land-corner (q/load-image "water-land-corner.gif")
+            :land-water-corner (q/load-image "land-water-corner.gif")
+            :land-water (q/load-image "land-water.gif")
+            :palette (q/load-image "palette.gif")}
    :camera camera
    :player {:coordinates [4 4]
             :direction 0.45}})
@@ -32,12 +37,11 @@
 (def tile-size 50)
 
 (defn draw-state [state]
-  (q/image (:img state) 0 0)
-  #_(doseq [row (first (:map state))]
-      (let [{:keys [x y]} row]
-        (q/fill 90 80 70)
-        #_(q/image (:img state) 0 0)
-        (q/rect (* x tile-size) (* y tile-size) tile-size tile-size))))
+  (doseq [column (:map state)
+          row column]
+    (let [{:keys [x y]} row
+          tile (rand-nth (keys (:images state)))]
+      (q/image (-> state :images tile) (* x tile-size) (* y tile-size)))))
 
 (let [canvas [800 800]
       c (camera canvas 64 0.8)]
