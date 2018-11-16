@@ -24,6 +24,7 @@
   (q/frame-rate 24)
   (q/color-mode :hsb)
   {:map (make-board 15)
+   :images (q/load-image "assets/water.gif")
    :camera camera
    :player {:coordinates [4 4]
             :direction 0.45}})
@@ -31,10 +32,12 @@
 (def tile-size 50)
 
 (defn draw-state [state]
-  (doseq [row (first (:map state))]
-    (let [{:keys [x y]} row]
-      (q/fill 90 80 70)
-      (q/rect (* x tile-size) (* y tile-size) tile-size tile-size))))
+  (q/image (:img state) 0 0)
+  #_(doseq [row (first (:map state))]
+      (let [{:keys [x y]} row]
+        (q/fill 90 80 70)
+        #_(q/image (:img state) 0 0)
+        (q/rect (* x tile-size) (* y tile-size) tile-size tile-size))))
 
 (let [canvas [800 800]
       c (camera canvas 64 0.8)]
