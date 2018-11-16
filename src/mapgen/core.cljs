@@ -66,6 +66,43 @@
 #_(joint-probability {:a .6 :b .3} {:a 0.3 :b 0.6})
 ;; => {:a 0.5, :b 0.5}
 
+(defn propagate-probability [board position]
+  (let [element (get board position)
+        neighbors-pos (disk-around position)
+        updated-neighbors (doall
+                           (for [n-pos neighbors-pos]
+                             (when-let [n-el (get board n-pos)]
+                               (let [new-prob (joint-probability (:prob element) (:prob n-el))]
+                                 [n-pos (assoc n-el :prob new-prob)]))))]
+    (into board updated-neighbors)))
+
+#_(propagate-probability fake-board [1 1])
+
+#_(into {}
+      (for [x [0 1 2]
+            y [0 1 2]]
+        [[x y] {:x x :y y :prob {:a (/ 1 3)
+                                 :b (/ 2 3)}}]))
+(def fake-board
+  {[2 2] {:x 2, :y 2, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [0 0] {:x 0, :y 0, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [1 0] {:x 1, :y 0, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [1 1] {:x 1, :y 1, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [0 2] {:x 0, :y 2, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [2 0] {:x 2, :y 0, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [2 1] {:x 2, :y 1, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [1 2] {:x 1, :y 2, :prob {:a 0.3333333333333333, :b 0.6666666666666666}},
+   [0 1] {:x 0, :y 1, :prob {:a 0.3333333333333333, :b 0.6666666666666666}}})
+
+#_(= fake-board (assoc-in fake-board [[1 1] :prob] {:a 0.5 :b 0.5}))
+;; => true
+
+#_(propagate-probability (assoc-in fake-board [[1 1] :prob] {:a 0 :b 1}) [1 1])
+;; All should be 0 1
+
+#_(propagate-probability (assoc-in fake-board [[1 1] :prob] {:a (/ 2 3) :b (/ 1 3)}) [1 1])
+;; All should be .5 .5
+
 (def tile-paths
   '[grass.gif
     grass-sand-corner.gif
