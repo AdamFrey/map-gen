@@ -1,5 +1,6 @@
 (ns mapgen.core
-  (:require [quil.core :as q :include-macros true]
+  (:require [clojure.string :as str]
+            [quil.core :as q :include-macros true]
             [quil.middleware :as m]))
 
 (enable-console-print!)
@@ -33,15 +34,35 @@
       (when-let [valid-tile (some-> board (aget y) (aget x))]
         valid-tile))))
 
+(defn create-asset-map [images]
+  (into {}
+        (map (fn [sym]
+               [(keyword (first (str/split (str sym) #"\."))) `(q/load-image ~(str "assets/" sym))]))
+        images))
+
+(comment
+  (create-asset-map
+   [])
+  )
+
 (defn setup [camera]
   (q/frame-rate 1)
   (q/color-mode :hsb)
   {:map (make-board board-size)
-   :images {:grass (q/load-image "assets/grass.gif")
-            :water (q/load-image "assets/water.gif")
-            :water-land-corner (q/load-image "assets/water-land-corner.gif")
-            :land-water-corner (q/load-image "assets/land-water-corner.gif")
-            :land-water (q/load-image "assets/land-water.gif")}
+   :images {:grass-water (quil.core/load-image "assets/grass-water.gif"),
+            :grass-sand-corner (quil.core/load-image "assets/grass-sand-corner.gif"),
+            :sand (quil.core/load-image "assets/sand.gif"),
+            :lava-sand-corner (quil.core/load-image "assets/lava-sand-corner.gif"),
+            :grass-water-corner (quil.core/load-image "assets/grass-water-corner.gif"),
+            :lava (quil.core/load-image "assets/lava.gif"),
+            :palette (quil.core/load-image "assets/palette.gif"),
+            :sand-grass-corner (quil.core/load-image "assets/sand-grass-corner.gif"),
+            :water-grass-corner (quil.core/load-image "assets/water-grass-corner.gif"),
+            :sand-grass (quil.core/load-image "assets/sand-grass.gif"),
+            :sand-lava-corner (quil.core/load-image "assets/sand-lava-corner.gif"),
+            :grass (quil.core/load-image "assets/grass.gif"),
+            :lava-sand (quil.core/load-image "assets/lava-sand.gif"),
+            :water (quil.core/load-image "assets/water.gif")}
    :camera camera})
 
 (defn draw-state [state]
