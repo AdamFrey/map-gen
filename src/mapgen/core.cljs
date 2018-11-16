@@ -30,15 +30,17 @@
 (def board-size 15)
 (def tile-size 15)
 (def global-scale 2)
+(def disk-size 1)
 
-(def sphere-size 2)
+(defn disk-around [[xx yy]]
+  (for [x (range (- xx disk-size) (+ xx (inc disk-size)))
+        y (range (- yy disk-size) (+ yy (inc disk-size)))
+        :when (not= [x y] [xx yy])]
+    [x y]))
 
-(defn placed-tile-probability-updates [board {origin-x :x origin-y :y}]
-  (for [x (range (- origin-x sphere-size) (+ origin-x (inc sphere-size)))
-        y (range (- origin-y sphere-size) (+ origin-y (inc sphere-size)))]
-    (when-not (= [x y] [origin-x origin-y])
-      (when-let [valid-tile (some-> board (aget y) (aget x))]
-        valid-tile))))
+#_(disk-around [1 2])
+;; => ([0 1] [0 2] [0 3] [1 1] [1 3] [2 1] [2 2] [2 3])
+
 
 (def tile-paths
   '[grass-water.gif,
