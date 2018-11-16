@@ -8,7 +8,7 @@
 
   :dependencies [[org.clojure/clojure "1.9.0-beta4"]
                  [org.clojure/clojurescript "1.9.946"]
-                 [quil "2.6.0"]
+                 [quil "2.7.1"]
                  [org.clojure/core.async "0.3.443"]]
 
   :plugins [[lein-figwheel "0.5.14"]
