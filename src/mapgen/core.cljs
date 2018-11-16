@@ -30,7 +30,7 @@
             :land-water (q/load-image "assets/land-water.gif")}
    :camera camera})
 
-(def tile-size 50)
+(def tile-size 15)
 
 (defn draw-state [state]
   (doseq [column (:map state)
@@ -39,7 +39,7 @@
           tile (rand-nth (keys (:images state)))]
       (q/image (-> state :images tile) (* x tile-size) (* y tile-size)))))
 
-(let [canvas [800 800]
+(let [canvas [300 225]
       c (camera canvas 64 0.8)]
   (q/defsketch my-sketch
     :host "display"
