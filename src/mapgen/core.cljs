@@ -22,7 +22,7 @@
 (defn setup [camera]
   (q/frame-rate 1)
   (q/color-mode :hsb)
-  {:map (make-board 15)
+  {:map (make-board 20)
    :images {:grass (q/load-image "assets/grass.gif")
             :water (q/load-image "assets/water.gif")
             :water-land-corner (q/load-image "assets/water-land-corner.gif")
