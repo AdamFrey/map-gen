@@ -41,6 +41,30 @@
 #_(disk-around [1 2])
 ;; => ([0 1] [0 2] [0 3] [1 1] [1 3] [2 1] [2 2] [2 3])
 
+(defn normalize [prob-map]
+  (let [prob-sum (apply + (vals prob-map))]
+    (for [[type prob] prob-map]
+      [type (/ prob prob-sum)])))
+
+#_(normalize {:a 0.3 :b 0.3})
+;; => ([:a 0.5] [:b 0.5])
+
+(defn joint-probability [prob-map-a prob-map-b]
+  (normalize
+   (into {}
+         (for [[type prob-b] prob-map-b
+               :let [prob-a   (type prob-map-a)]]
+           [type (* prob-b prob-a)]))))
+
+#_(joint-probability {:a 0.5 :b 0.5} {:a 0 :b 1})
+;; => ([:a 0] [:b 1])
+
+#_(joint-probability {:a 0 :b 1} {:a 0.3 :b 0.6})
+;; => ([:a 0] [:b 1])
+
+#_(joint-probability {:a .6 :b .3} {:a 0.3 :b 0.6})
+;; => ([:a 0.5] [:b 0.5])
+
 
 (def tile-paths
   '[grass-water.gif,
