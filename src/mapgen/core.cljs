@@ -26,10 +26,9 @@
   {:map (make-board 15)
    :images {:grass (q/load-image "assets/grass.gif")
             :water (q/load-image "assets/water.gif")
-            :water-land-corner (q/load-image "water-land-corner.gif")
-            :land-water-corner (q/load-image "land-water-corner.gif")
-            :land-water (q/load-image "land-water.gif")
-            :palette (q/load-image "palette.gif")}
+            :water-land-corner (q/load-image "assets/water-land-corner.gif")
+            :land-water-corner (q/load-image "assets/land-water-corner.gif")
+            :land-water (q/load-image "assets/land-water.gif")}
    :camera camera
    :player {:coordinates [4 4]
             :direction 0.45}})
