@@ -230,13 +230,7 @@
           tile (rand-nth (keys (:images state)))]
       (q/with-translation [(+ (/ tile-size 2) (* x tile-size))
                            (+ (/ tile-size 2) (* y tile-size))]
-        (draw-image state (rand-nth (keys boundary-map)) 100)
-        #_(q/rotate rot)
-        #_(doseq [[t-type t-prob] prob]
-            (q/tint-float 255 (* 255 t-prob))
-            (q/image (-> state :images t-type) 0 0))
-        #_(q/rotate (- rot)))
-      )))
+        (draw-image state (rand-nth (keys boundary-map)) 100)))))
 
 (let [c-size (* 2 board-size tile-size)
       canvas [c-size c-size]
