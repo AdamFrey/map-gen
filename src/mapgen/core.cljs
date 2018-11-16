@@ -43,11 +43,12 @@
 
 (defn normalize [prob-map]
   (let [prob-sum (apply + (vals prob-map))]
-    (for [[type prob] prob-map]
-      [type (/ prob prob-sum)])))
+    (into {}
+          (for [[type prob] prob-map]
+            [type (/ prob prob-sum)]))))
 
 #_(normalize {:a 0.3 :b 0.3})
-;; => ([:a 0.5] [:b 0.5])
+;; => {:a 0.5, :b 0.5}
 
 (defn joint-probability [prob-map-a prob-map-b]
   (normalize
@@ -57,13 +58,13 @@
            [type (* prob-b prob-a)]))))
 
 #_(joint-probability {:a 0.5 :b 0.5} {:a 0 :b 1})
-;; => ([:a 0] [:b 1])
+;; => {:a 0, :b 1}
 
 #_(joint-probability {:a 0 :b 1} {:a 0.3 :b 0.6})
-;; => ([:a 0] [:b 1])
+;; => {:a 0, :b 1}
 
 #_(joint-probability {:a .6 :b .3} {:a 0.3 :b 0.6})
-;; => ([:a 0.5] [:b 0.5])
+;; => {:a 0.5, :b 0.5}
 
 (def tile-paths
   '[grass.gif
