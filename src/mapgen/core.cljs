@@ -11,8 +11,7 @@
    :height height
    :resolution resolution
    :spacing (/ width resolution)
-   :range 14
-   :light-range 10})
+   :range 14})
 
 (defn make-board [size]
   (to-array-2d
@@ -20,24 +19,49 @@
            (mapv (fn [x] {:x x :y y}) x-column))
          (range size) (repeat size (range size)))))
 
-(defn setup [camera]
-  (q/frame-rate 24)
-  (q/color-mode :hsb)
-  {:map (make-board 15)
-   :camera camera
-   :player {:coordinates [4 4]
-            :direction 0.45}})
 
-(def tile-size 50)
+(def board-size 15)
+(def tile-size 15)
+(def global-scale 2)
+
+(def sphere-size 2)
+
+(defn placed-tile-probability-updates [board {origin-x :x origin-y :y}]
+  (for [x (range (- origin-x sphere-size) (+ origin-x (inc sphere-size)))
+        y (range (- origin-y sphere-size) (+ origin-y (inc sphere-size)))]
+    (when-not (= [x y] [origin-x origin-y])
+      (when-let [valid-tile (some-> board (aget y) (aget x))]
+        valid-tile))))
+
+(defn setup [camera]
+  (q/frame-rate 1)
+  (q/color-mode :hsb)
+  {:map (make-board board-size)
+   :images {:grass (q/load-image "assets/grass.gif")
+            :water (q/load-image "assets/water.gif")
+            :water-land-corner (q/load-image "assets/water-land-corner.gif")
+            :land-water-corner (q/load-image "assets/land-water-corner.gif")
+            :land-water (q/load-image "assets/land-water.gif")}
+   :camera camera})
 
 (defn draw-state [state]
-  (doseq [row (first (:map state))]
-    (let [{:keys [x y]} row]
-      (q/fill 90 80 70)
-      (q/rect (* x tile-size) (* y tile-size) tile-size tile-size))))
+  (q/scale global-scale)
+  (q/image-mode :center)
+  (doseq [column (:map state)
+          row column]
+    (let [{:keys [x y]} row
+          tile (rand-nth (keys (:images state)))
+          rot (rand)]
+      (q/with-translation [(+ (/ tile-size 2) (* x tile-size))
+                           (+ (/ tile-size 2) (* y tile-size))]
+        (q/rotate rot)
+        (q/image (-> state :images tile) 0 0)
+        (q/rotate (- rot)))
+      )))
 
-(let [canvas [800 800]
-      c (camera canvas 64 0.8)]
+(let [c-size (* 2 board-size tile-size)
+      canvas [c-size c-size]
+      c (camera canvas 64 0.6)]
   (q/defsketch my-sketch
     :host "display"
     :size [(c :width) (c :height)]
