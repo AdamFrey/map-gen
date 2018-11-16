@@ -205,7 +205,7 @@
 (def neighbors
   (reduce (fn [acc [t1 t2 pos _]]
             (update-in acc [t1 (get position-coords pos)]
-                       #((fnil conj []) % t2))) {} adjacency-map))
+                       #((fnil conj #{}) % t2))) {} adjacency-map))
 
 (defn draw-image [state tile prob]
   (let [rotation-deg (* 90 (js/parseInt (re-find #"\d$" (name tile))))
