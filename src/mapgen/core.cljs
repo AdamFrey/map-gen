@@ -14,10 +14,16 @@
    :spacing (/ width resolution)
    :range 14})
 
+(def init-prob
+  {:grass (/ 1 3)
+   :grass-water (/ 1 3)
+   :water (/ 1 3)})
+
+
 (defn make-board [size]
   (to-array-2d
    (mapv (fn [y x-column]
-           (mapv (fn [x] {:x x :y y}) x-column))
+           (mapv (fn [x] {:x x :y y :prob init-prob}) x-column))
          (range size) (repeat size (range size)))))
 
 
@@ -65,18 +71,68 @@
             :water (quil.core/load-image "assets/water.gif")}
    :camera camera})
 
+;; (into {}
+;;       (for [x [-1 0 1]
+;;             y [-1 0 1]]
+;;         [[x y] (case y
+;;                  1 [:grass-water]
+;;                  0 [:water]
+;;                  -1 [:water])]))
+
+ (def tiles
+  {:grass {:type :grass
+           :rot 0
+           :neighbors
+           {[0 1] [:grass],
+            [0 0] [:grass],
+            [-1 1] [:grass],
+            [1 1] [:grass],
+            [1 -1] [:grass-water],
+            [1 0] [:grass],
+            [-1 0] [:grass],
+            [-1 -1] [:grass-water],
+            [0 -1] [:grass-water]}}
+
+   :grass-water {:type :grass-water
+                :rot 0
+                :neighbors
+                {[0 1] [:grass],
+                 [0 0] [:grass-water],
+                 [-1 1] [:grass],
+                 [1 1] [:grass],
+                 [1 -1] [:water],
+                 [1 0] [:grass-water],
+                 [-1 0] [:grass-water],
+                 [-1 -1] [:water],
+                 [0 -1] [:water]}}
+
+   :water {:type :water
+           :rot 0
+           :neighbors
+           {[0 1] [:grass-water],
+            [0 0] [:water],
+            [-1 1] [:grass-water],
+            [1 1] [:grass-water],
+            [1 -1] [:water],
+            [1 0] [:water],
+            [-1 0] [:water],
+            [-1 -1] [:water],
+            [0 -1] [:water]}}})
+
 (defn draw-state [state]
   (q/scale global-scale)
   (q/image-mode :center)
   (doseq [column (:map state)
           row column]
-    (let [{:keys [x y]} row
+    (let [{:keys [x y prob]} row
           tile (rand-nth (keys (:images state)))
           rot (rand)]
       (q/with-translation [(+ (/ tile-size 2) (* x tile-size))
                            (+ (/ tile-size 2) (* y tile-size))]
         (q/rotate rot)
-        (q/image (-> state :images tile) 0 0)
+        (doseq [[t-type t-prob] prob]
+          (q/tint-float 255 (* 255 t-prob))
+          (q/image (-> state :images t-type) 0 0))
         (q/rotate (- rot)))
       )))
 
