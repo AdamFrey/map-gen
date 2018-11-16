@@ -11,8 +11,7 @@
    :height height
    :resolution resolution
    :spacing (/ width resolution)
-   :range 14
-   :light-range 10})
+   :range 14})
 
 (defn make-board [size]
   (to-array-2d
@@ -29,9 +28,7 @@
             :water-land-corner (q/load-image "assets/water-land-corner.gif")
             :land-water-corner (q/load-image "assets/land-water-corner.gif")
             :land-water (q/load-image "assets/land-water.gif")}
-   :camera camera
-   :player {:coordinates [4 4]
-            :direction 0.45}})
+   :camera camera})
 
 (def tile-size 50)
 
