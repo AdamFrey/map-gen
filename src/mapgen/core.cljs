@@ -24,6 +24,15 @@
 (def tile-size 15)
 (def global-scale 2)
 
+(def sphere-size 2)
+
+(defn placed-tile-probability-updates [board {origin-x :x origin-y :y}]
+  (for [x (range (- origin-x sphere-size) (+ origin-x (inc sphere-size)))
+        y (range (- origin-y sphere-size) (+ origin-y (inc sphere-size)))]
+    (when-not (= [x y] [origin-x origin-y])
+      (when-let [valid-tile (some-> board (aget y) (aget x))]
+        valid-tile))))
+
 (defn setup [camera]
   (q/frame-rate 1)
   (q/color-mode :hsb)
