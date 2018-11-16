@@ -65,21 +65,20 @@
 #_(joint-probability {:a .6 :b .3} {:a 0.3 :b 0.6})
 ;; => ([:a 0.5] [:b 0.5])
 
-
 (def tile-paths
-  '[grass-water.gif,
-    grass-sand-corner.gif,
-    sand.gif,
-    lava-sand-corner.gif,
-    grass-water-corner.gif,
-    lava.gif,
-    sand-grass-corner.gif,
-    water-grass-corner.gif,
-    sand-grass.gif,
-    sand-lava-corner.gif,
-    grass.gif,
-    lava-sand.gif,
-    water.gif])
+  '[grass.gif
+    grass-sand-corner.gif
+    grass-water-corner.gif
+    grass-water.gif
+    lava.gif
+    lava-sand-corner.gif
+    lava-sand.gif
+    sand.gif
+    sand-grass-corner.gif
+    sand-grass.gif
+    sand-lava-corner.gif
+    water.gif
+    water-grass-corner.gif])
 
 (def tile->asset-path
   (into {}
@@ -155,7 +154,7 @@
    :water-grass-corner [:w :w :w :b :g :b :w :w]
    :water [:w :w :w :w :w :w :w :w]
    :sand [:s :s :s :s :s :s :s :s]
-   :grass-sand [:g :g :g :s :s :s :s :s]
+   :sand-grass [:g :g :g :s :s :s :s :s]
    :grass-sand-corner [:g :s :s :s :s :s :s :s]
    :sand-grass-corner [:s :s :g :g :g :g :g :s]
    :lava [:l :l :l :l :l :l :l :l]
@@ -209,12 +208,13 @@
                        #((fnil conj #{}) % t2))) {} adjacency-map))
 
 (defn draw-image [state tile prob]
-  (let [rotation-deg (* 90 (js/parseInt (re-find #"\d$" (name tile))))
-        base-tile (keyword (second (re-find #"(.+)\-\d$" (name tile))))]
-    (q/rotate rotation-deg)
+  (let [rotation-rad (* (/ js/Math.PI 2) (js/parseInt (re-find #"\d$" (name tile))))
+        base-tile (keyword (second (re-find #"(.+)\-\d$" (name tile))))
+        img (-> state :images base-tile)]
+    (q/rotate rotation-rad)
     (q/tint-float 255 (* 255 prob))
     (q/image (-> state :images base-tile) 0 0)
-    (q/rotate (- rotation-deg))))
+    (q/rotate (- rotation-rad))))
 
 (defn draw-state [state]
   (q/scale global-scale)
