@@ -79,7 +79,7 @@
 ;;                  0 [:water]
 ;;                  -1 [:water])]))
 
- (def tiles
+(def tiles
   {:grass {:type :grass
            :rot 0
            :neighbors
@@ -94,17 +94,17 @@
             [0 -1] [:grass-water]}}
 
    :grass-water {:type :grass-water
-                :rot 0
-                :neighbors
-                {[0 1] [:grass],
-                 [0 0] [:grass-water],
-                 [-1 1] [:grass],
-                 [1 1] [:grass],
-                 [1 -1] [:water],
-                 [1 0] [:grass-water],
-                 [-1 0] [:grass-water],
-                 [-1 -1] [:water],
-                 [0 -1] [:water]}}
+                 :rot 0
+                 :neighbors
+                 {[0 1] [:grass],
+                  [0 0] [:grass-water],
+                  [-1 1] [:grass],
+                  [1 1] [:grass],
+                  [1 -1] [:water],
+                  [1 0] [:grass-water],
+                  [-1 0] [:grass-water],
+                  [-1 -1] [:water],
+                  [0 -1] [:water]}}
 
    :water {:type :water
            :rot 0
@@ -197,4 +197,4 @@
                       3 [-1 0]})
 
 (def neighbors
-  (reduce (fn [acc [t1 t2 pos _]] (update-in acc [t1 (get position-coords pos)] #((fnil conj []) % t2))) {} adjacency-map))
+  (reduce (fn [acc [t1 t2 pos _]] (update-in acc [t1 (get position-coords pos)] #((fnil conj #{}) % t2))) {} adjacency-map))
