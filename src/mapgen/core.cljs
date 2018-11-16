@@ -46,3 +46,44 @@
     :draw draw-state
     :features [:keep-on-top]
     :middleware [m/fun-mode]))
+
+(defrecord Tile
+    [tile-type orientation])
+
+(def tile-types {:grass [:g :g :g :g :g :g :g :g]
+                 :grass-water [:g :g :g :b :w :w :w :b]
+                 :grass-water-corner [:g :g :g :b :w :b :g :g]
+                 :water-grass-corner [:w :w :w :b :g :b :w :w]
+                 :water [:w :w :w :w :w :w :w :w]})
+
+(defn rotated-tiles [t]
+  (map #(vector (keyword (str (name t) "-" %))
+                (->> (cycle (get tile-types t))
+                     (drop (* 2 %))
+                     (take 8)))
+       (range 4)))
+
+(def boundary-map
+  (into {} (apply concat (map rotated-tiles (keys tile-types)))))
+
+;;; positions from T
+;;;    0
+;;;  3 T 1
+;;;    2
+
+(defn can-be-adjacent?
+  [t1 t2 position]
+  (= (->> (cycle (get boundary-map t1))
+          (drop (* 2 position))
+          (take 3))
+     (->> (cycle (get boundary-map t2))
+          (drop 4)
+          (drop (* 2 position))
+          (take 3)
+          reverse)))
+
+#_(defn adjacency-map [t]
+    (for [t (keys boundary-map)
+          pos ()])
+    (filter #(fn [[t1 t2]] (can-be-adjacent? t1 t2) )))
+
