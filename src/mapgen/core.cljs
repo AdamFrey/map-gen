@@ -15,9 +15,9 @@
    :range 14})
 
 (def init-prob
-  {:grass (/ 1 3)
-   :grass-water (/ 1 3)
-   :water (/ 1 3)})
+  {:grass-0 (/ 1 3)
+   :grass-water-0 (/ 1 3)
+   :water-0 (/ 1 3)})
 
 (defn make-board [size]
   (into {}
@@ -125,14 +125,7 @@
                 (str "assets/" path)]))
         tile-paths))
 
-(defn setup [camera]
-  (q/frame-rate 1)
-  (q/color-mode :hsb)
-  {:map (make-board board-size)
-   :images (reduce-kv (fn [acc k v]
-                        (assoc acc k (q/load-image v)))
-                      {} tile->asset-path)
-   :camera camera})
+
 
 (def tiles
   {:grass {:type :grass
@@ -202,6 +195,8 @@
 (def boundary-map
   (into {} (apply concat (map rotated-tiles (keys origin-tile-types)))))
 
+#_(keys boundary-map)
+
 ;;; positions from T
 ;;; 0
 ;;; 3 T 1
@@ -244,12 +239,13 @@
       (:water :lava :sand :grass) [img 0]
       [img (* (/ js/Math.PI 2) (js/parseInt (re-find #"\d$" (name tile))))])))
 
-(defn draw-image [state tile prob]
-  (let [[asset rotation-rad] (asset+rotation state tile)]
-    (q/rotate rotation-rad)
-    (q/tint-float 255 (* 255 prob))
-    (q/image asset 0 0)
-    (q/rotate (- rotation-rad))))
+(defn draw-image [state prob-map]
+  (doseq [[tile prob] prob-map]
+    (let [[asset rotation-rad] (asset+rotation state tile)]
+      (q/rotate rotation-rad)
+      (q/tint-float 255 (* 255 prob))
+      (q/image asset 0 0)
+      (q/rotate (- rotation-rad)))))
 
 (defn draw-state [state]
   (q/scale global-scale)
@@ -260,7 +256,16 @@
           tile (rand-nth (keys (:images state)))]
       (q/with-translation [(+ (/ tile-size 2) (* x tile-size))
                            (+ (/ tile-size 2) (* y tile-size))]
-        (draw-image state (rand-nth (keys boundary-map)) 100)))))
+        (draw-image state prob)))))
+
+(defn setup [camera]
+  (q/frame-rate 1)
+  (q/color-mode :hsb)
+  {:map (make-board board-size)
+   :images (reduce-kv (fn [acc k v]
+                        (assoc acc k (q/load-image v)))
+                      {} tile->asset-path)
+   :camera camera})
 
 (let [c-size (* 2 board-size tile-size)
       canvas [c-size c-size]
