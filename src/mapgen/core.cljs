@@ -39,13 +39,18 @@
 
 (defn draw-state [state]
   (q/scale global-scale)
+  (q/image-mode :center)
   (doseq [column (:map state)
           row column]
     (let [{:keys [x y]} row
-          tile (rand-nth (keys (:images state)))]
-      (q/rotate 0.01)
-      (q/image (-> state :images tile) (* x tile-size) (* y tile-size))
-      (q/rotate -0.01))))
+          tile (rand-nth (keys (:images state)))
+          rot (rand)]
+      (q/with-translation [(+ (/ tile-size 2) (* x tile-size))
+                           (+ (/ tile-size 2) (* y tile-size))]
+        (q/rotate rot)
+        (q/image (-> state :images tile) 0 0)
+        (q/rotate (- rot)))
+      )))
 
 (let [c-size (* 2 board-size tile-size)
       canvas [c-size c-size]
