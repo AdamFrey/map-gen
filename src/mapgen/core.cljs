@@ -19,13 +19,13 @@
    :grass-water (/ 1 3)
    :water (/ 1 3)})
 
-
 (defn make-board [size]
-  (to-array-2d
-   (mapv (fn [y x-column]
-           (mapv (fn [x] {:x x :y y :prob init-prob}) x-column))
-         (range size) (repeat size (range size)))))
-
+  (into {}
+        (for [x (range size)
+              y (range size)]
+          [[x y] {:x x
+                  :y y
+                  :prob init-prob}])))
 
 (def board-size 15)
 (def tile-size 15)
