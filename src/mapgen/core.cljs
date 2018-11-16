@@ -14,28 +14,35 @@
    :range 14
    :light-range 10})
 
+(defn make-board [size]
+  (to-array-2d
+   (mapv (fn [y x-column]
+           (mapv (fn [x] {:x x :y y}) x-column))
+         (range size) (repeat size (range size)))))
+
 (defn setup [camera]
   (q/frame-rate 24)
   (q/color-mode :hsb)
-  {:map    [[1 1 1 1 1 1 1 1]
-            [1 0 0 0 0 0 0 1]
-            [1 1 1 0 0 1 1 1]
-            [1 0 1 0 0 1 0 1]
-            [1 0 1 0 0 1 0 1]
-            [1 0 0 0 0 0 0 1]
-            [1 1 1 1 1 1 1 1]]
+  {:map (make-board 15)
    :camera camera
    :player {:coordinates [4 4]
-            :direction   0.45}})
+            :direction 0.45}})
 
-(let [canvas [1320 1240]
-      c      (camera canvas 64 0.8)]
+(def tile-size 50)
 
+(defn draw-state [state]
+  (doseq [row (first (:map state))]
+    (let [{:keys [x y]} row]
+      (q/fill 90 80 70)
+      (q/rect (* x tile-size) (* y tile-size) tile-size tile-size))))
+
+(let [canvas [800 800]
+      c (camera canvas 64 0.8)]
   (q/defsketch my-sketch
     :host "display"
     :size [(c :width) (c :height)]
     :setup (partial setup c)
     ;;:update update-state
-    ;;:draw draw-state
+    :draw draw-state
     :features [:keep-on-top]
     :middleware [m/fun-mode]))
