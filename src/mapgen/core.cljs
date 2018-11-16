@@ -155,7 +155,15 @@
                  :grass-water [:g :g :g :b :w :w :w :b]
                  :grass-water-corner [:g :g :g :b :w :b :g :g]
                  :water-grass-corner [:w :w :w :b :g :b :w :w]
-                 :water [:w :w :w :w :w :w :w :w]})
+                 :water [:w :w :w :w :w :w :w :w]
+                 :sand [:s :s :s :s :s :s :s :s]
+                 :grass-sand [:g :g :g :s :s :s :s :s]
+                 :grass-sand-corner [:g :s :s :s :s :s :s :s]
+                 :sand-grass-corner [:s :s :g :g :g :g :g :s]
+                 :lava [:l :l :l :l :l :l :l :l]
+                 :lava-sand [:l :l :l :l :s :s :s :l]
+                 :lava-sand-corner [:l :l :l :l :s :l :l :l]
+                 :sand-lava-corner [:s :s :s :l :l :l :s :s]})
 
 (defn rotated-tiles [t]
   (map #(vector (keyword (str (name t) "-" %))
