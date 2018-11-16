@@ -40,35 +40,35 @@
       (when-let [valid-tile (some-> board (aget y) (aget x))]
         valid-tile))))
 
-(defn create-asset-map [images]
-  (into {}
-        (map (fn [sym]
-               [(keyword (first (str/split (str sym) #"\."))) `(q/load-image ~(str "assets/" sym))]))
-        images))
+(def tile-paths
+  '[grass-water.gif,
+    grass-sand-corner.gif,
+    sand.gif,
+    lava-sand-corner.gif,
+    grass-water-corner.gif,
+    lava.gif,
+    sand-grass-corner.gif,
+    water-grass-corner.gif,
+    sand-grass.gif,
+    sand-lava-corner.gif,
+    grass.gif,
+    lava-sand.gif,
+    water.gif])
 
-(comment
-  (create-asset-map
-   [])
-  )
+(def tile->asset-path
+  (into {}
+        (map (fn [path]
+               [(keyword (first (str/split (str path) #"\.")))
+                (str "assets/" path)]))
+        tile-paths))
 
 (defn setup [camera]
   (q/frame-rate 1)
   (q/color-mode :hsb)
   {:map (make-board board-size)
-   :images {:grass-water (quil.core/load-image "assets/grass-water.gif"),
-            :grass-sand-corner (quil.core/load-image "assets/grass-sand-corner.gif"),
-            :sand (quil.core/load-image "assets/sand.gif"),
-            :lava-sand-corner (quil.core/load-image "assets/lava-sand-corner.gif"),
-            :grass-water-corner (quil.core/load-image "assets/grass-water-corner.gif"),
-            :lava (quil.core/load-image "assets/lava.gif"),
-            :palette (quil.core/load-image "assets/palette.gif"),
-            :sand-grass-corner (quil.core/load-image "assets/sand-grass-corner.gif"),
-            :water-grass-corner (quil.core/load-image "assets/water-grass-corner.gif"),
-            :sand-grass (quil.core/load-image "assets/sand-grass.gif"),
-            :sand-lava-corner (quil.core/load-image "assets/sand-lava-corner.gif"),
-            :grass (quil.core/load-image "assets/grass.gif"),
-            :lava-sand (quil.core/load-image "assets/lava-sand.gif"),
-            :water (quil.core/load-image "assets/water.gif")}
+   :images (reduce-kv (fn [acc k v]
+                        (assoc acc k (q/load-image v)))
+                      {} tile->asset-path)
    :camera camera})
 
 ;; (into {}
