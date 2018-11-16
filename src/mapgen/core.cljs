@@ -106,8 +106,18 @@
           (take 3)
           reverse)))
 
-#_(defn adjacency-map [t]
-    (for [t (keys boundary-map)
-          pos ()])
-    (filter #(fn [[t1 t2]] (can-be-adjacent? t1 t2) )))
+(defn adjacency-map-for-tile [t]
+  (for [t2 (keys boundary-map)
+        pos (range 4)]
+    [t t2 pos(can-be-adjacent? t t2 pos)]))
 
+(def adjacency-map
+  (filter last (mapcat adjacency-map-for-tile (keys boundary-map))))
+
+(def position-coords {0 [0 -1]
+                      1 [1 0]
+                      2 [0 1]
+                      3 [-1 0]})
+
+(def neighbors
+  (reduce (fn [acc [t1 t2 pos _]] (update-in acc [t1 (get position-coords pos)] #((fnil conj []) % t2))) {} adjacency-map))
