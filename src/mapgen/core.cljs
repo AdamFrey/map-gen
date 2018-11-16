@@ -19,10 +19,15 @@
            (mapv (fn [x] {:x x :y y}) x-column))
          (range size) (repeat size (range size)))))
 
+
+(def board-size 15)
+(def tile-size 15)
+(def global-scale 2)
+
 (defn setup [camera]
   (q/frame-rate 1)
   (q/color-mode :hsb)
-  {:map (make-board 20)
+  {:map (make-board board-size)
    :images {:grass (q/load-image "assets/grass.gif")
             :water (q/load-image "assets/water.gif")
             :water-land-corner (q/load-image "assets/water-land-corner.gif")
@@ -33,14 +38,16 @@
 (def tile-size 15)
 
 (defn draw-state [state]
+  (q/scale global-scale)
   (doseq [column (:map state)
           row column]
     (let [{:keys [x y]} row
           tile (rand-nth (keys (:images state)))]
       (q/image (-> state :images tile) (* x tile-size) (* y tile-size)))))
 
-(let [canvas [300 225]
-      c (camera canvas 64 0.8)]
+(let [c-size (* 2 board-size tile-size)
+      canvas [c-size c-size]
+      c (camera canvas 64 0.6)]
   (q/defsketch my-sketch
     :host "display"
     :size [(c :width) (c :height)]
