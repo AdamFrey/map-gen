@@ -35,8 +35,6 @@
             :land-water (q/load-image "assets/land-water.gif")}
    :camera camera})
 
-(def tile-size 15)
-
 (defn draw-state [state]
   (q/scale global-scale)
   (q/image-mode :center)
