@@ -207,13 +207,18 @@
             (update-in acc [t1 (get position-coords pos)]
                        #((fnil conj #{}) % t2))) {} adjacency-map))
 
-(defn draw-image [state tile prob]
-  (let [rotation-rad (* (/ js/Math.PI 2) (js/parseInt (re-find #"\d$" (name tile))))
-        base-tile (keyword (second (re-find #"(.+)\-\d$" (name tile))))
+(defn asset+rotation [state tile]
+  (let [base-tile (keyword (second (re-find #"(.+)\-\d$" (name tile))))
         img (-> state :images base-tile)]
+    (case base-tile
+      (:water :lava :sand :grass) [img 0]
+      [img (* (/ js/Math.PI 2) (js/parseInt (re-find #"\d$" (name tile))))])))
+
+(defn draw-image [state tile prob]
+  (let [[asset rotation-rad] (asset+rotation state tile)]
     (q/rotate rotation-rad)
     (q/tint-float 255 (* 255 prob))
-    (q/image (-> state :images base-tile) 0 0)
+    (q/image asset 0 0)
     (q/rotate (- rotation-rad))))
 
 (defn draw-state [state]
