@@ -134,14 +134,6 @@
                       {} tile->asset-path)
    :camera camera})
 
-#_(into {}
-        (for [x [-1 0 1]
-              y [-1 0 1]]
-          [[x y] (case y
-                   1 [:grass-water]
-                   0 [:water]
-                   -1 [:water])]))
-
 (def tiles
   {:grass {:type :grass
            :rot 0
