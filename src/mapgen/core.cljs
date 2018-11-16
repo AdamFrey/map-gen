@@ -43,7 +43,9 @@
           row column]
     (let [{:keys [x y]} row
           tile (rand-nth (keys (:images state)))]
-      (q/image (-> state :images tile) (* x tile-size) (* y tile-size)))))
+      (q/rotate 0.01)
+      (q/image (-> state :images tile) (* x tile-size) (* y tile-size))
+      (q/rotate -0.01))))
 
 (let [c-size (* 2 board-size tile-size)
       canvas [c-size c-size]
