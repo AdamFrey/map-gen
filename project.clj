@@ -9,7 +9,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-beta4"]
                  [org.clojure/clojurescript "1.9.946"]
                  [quil "2.6.0"]
-                 [org.clojure/core.async  "0.3.443"]]
+                 [org.clojure/core.async "0.3.443"]]
 
   :plugins [[lein-figwheel "0.5.14"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
@@ -23,16 +23,16 @@
                 ;; The presence of a :figwheel configuration here
                 ;; will cause figwheel to inject the figwheel client
                 ;; into your build
-                :figwheel {:on-jsload "raycaster.core/on-js-reload"
+                :figwheel {:on-jsload "mapgen.core/on-js-reload"
                            ;; :open-urls will pop open your application
                            ;; in the default browser once Figwheel has
                            ;; started and compiled your application.
                            ;; Comment this out once it no longer serves you.
                            :open-urls ["http://localhost:3449/index.html"]}
 
-                :compiler {:main raycaster.core
+                :compiler {:main mapgen.core
                            :asset-path "js/compiled/out"
-                           :output-to "resources/public/js/compiled/raycaster.js"
+                           :output-to "resources/public/js/compiled/mapgen.js"
                            :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true
                            ;; To console.log CLJS data-structures make sure you enable devtools in Chrome
@@ -43,8 +43,8 @@
                ;; lein cljsbuild once min
                {:id "min"
                 :source-paths ["src"]
-                :compiler {:output-to "resources/public/js/compiled/raycaster.js"
-                           :main raycaster.core
+                :compiler {:output-to "resources/public/js/compiled/mapgen.js"
+                           :main mapgen.core
                            :optimizations :advanced
                            :pretty-print false}}]}
 
@@ -68,7 +68,7 @@
              ;; To be able to open files in your editor from the heads up display
              ;; you will need to put a script on your path.
              ;; that script will have to take a file path and a line number
-             ;; ie. in  ~/bin/myfile-opener
+             ;; ie. in ~/bin/myfile-opener
              ;; #! /bin/sh
              ;; emacsclient -n +$2 $1
              ;;
