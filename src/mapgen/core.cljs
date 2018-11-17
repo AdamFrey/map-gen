@@ -22,20 +22,28 @@
    :water-grass-corner [:w :w :w :b :g :b :w :w]
    :water [:w :w :w :w :w :w :w :w]
    :sand [:s :s :s :s :s :s :s :s]
-   :sand-grass [:g :g :g :s :s :s :s :s]
-   :grass-sand-corner [:g :s :s :s :s :s :s :s]
-   :sand-grass-corner [:s :s :g :g :g :g :g :s]
+   :sand-grass [:s :s :s :s :g :g :g :s]
+   :grass-sand-corner [:g :g :g :s :s :s :g :g]
+   :sand-grass-corner [:s :s :s :s :g :s :s :s]
    :lava [:l :l :l :l :l :l :l :l]
    :lava-sand [:l :l :l :l :s :s :s :l]
    :lava-sand-corner [:l :l :l :l :s :l :l :l]
    :sand-lava-corner [:s :s :s :l :l :l :s :s]})
 
 (def init-weights
-  {:grass 10
-   :grass-water 5
-   :water 10
-   :grass-water-corner 3
-   :water-grass-corner 3})
+  {:grass 100
+   :grass-water 20
+   :water 100
+   :grass-water-corner 1
+   :water-grass-corner 3
+   :sand 10
+   :sand-grass 10
+   :sand-grass-corner 3
+   :grass-sand-corner 1
+   :lava 1
+   :lava-sand 1
+   :lava-sand-corner 1
+   :sand-lava-corner 1})
 
 (def init-prob
   {:grass-0 (/ 1 3)
@@ -273,16 +281,20 @@
           (draw-image-weights state allowed-tiles ))))))
 
 (defn setup-weights [camera]
-(q/frame-rate 1)
-(q/color-mode :hsb)
-{:map (make-board-weights board-size)
- :images (reduce-kv (fn [acc k v]
-                      (assoc acc k (q/load-image v)))
-                    {} tile->asset-path)
- :camera camera})
+  (q/frame-rate 1)
+  (q/color-mode :hsb)
+  {:map (make-board-weights board-size)
+   :images (reduce-kv (fn [acc k v]
+                        (assoc acc k (q/load-image v)))
+                      {} tile->asset-path)
+   :camera camera})
+
+(defn compute-weighted-count
+  [[_ tile]]
+  (count (:allowed-tiles tile)))
 
 (defn pick-tile [board]
-  (let [tiles-grouped-by-allowed (dissoc (group-by (fn [[k v]] (count (:allowed-tiles v))) board)
+  (let [tiles-grouped-by-allowed (dissoc (group-by compute-weighted-count board)
                                          0)
         min-count (first (sort (keys tiles-grouped-by-allowed)))
         ;; note that since board is a map, each entry is a key-value pair.
