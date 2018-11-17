@@ -1,7 +1,8 @@
 (ns mapgen.core
   (:require [clojure.string :as str]
             [quil.core :as q :include-macros true]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [clojure.set :as set]))
 
 (enable-console-print!)
 
@@ -212,12 +213,12 @@
           (neighbors)))
 
 (defn make-board-weights [size]
-  (into {}
+  (into (sorted-map)
         (for [x (range size)
               y (range size)]
           [[x y] {:x x
                   :y y
-                  :allowed-tiles (keys tiles)}])))
+                  :allowed-tiles (set (keys tiles))}])))
 
 (defn asset+rotation [state tile]
   (let [base-tile (keyword (second (re-find #"(.+)\-\d$" (name tile))))
@@ -300,13 +301,44 @@
                              (keys tile-groups))]
     (rand-nth (tile-groups chosen-group))))
 
+(defn get-allowed-tiles
+  [board coords]
+  (get-in board [coords :allowed-tiles]
+          #{(get-in board [coords :tile-type])}))
+
+(defn distribute-allowed
+  [board coords]
+  (let [my-allowed-tiles (get-allowed-tiles board coords)]
+    (reduce (fn [board' delta-coords]
+              (let [allowed-tiles-for-my-neighbor
+                    (into #{}
+                          (mapcat #(get-in tiles [% :neighbors delta-coords])
+                                  my-allowed-tiles))
+                    [x y :as neighbor-coords] (mapv + coords delta-coords)]
+                (if (and (>= x 0) (>= y 0) (< x board-size) (< y board-size))
+                  (let [neighbor-allowed-tiles (get-allowed-tiles board' neighbor-coords)
+                        neighbor-allowed-tiles' (set/intersection allowed-tiles-for-my-neighbor
+                                                                  neighbor-allowed-tiles)]
+                    (if (seq neighbor-allowed-tiles')
+                      (if (not= neighbor-allowed-tiles neighbor-allowed-tiles')
+                        (distribute-allowed (assoc-in board'
+                                                      [neighbor-coords :allowed-tiles]
+                                                      neighbor-allowed-tiles')
+                                            neighbor-coords)
+                        board')
+                      (reduced nil)))
+                  board')))
+            board
+            (vals position-coords))))
+
 (defn update-state-weights [state]
   (let [board (:map state)
         [coords {:keys [allowed-tiles]}] (pick-tile board)
         new-type (pick-tile-type allowed-tiles)
-        new-board (update board coords #(-> %
-                                            (assoc :tile-type new-type)
-                                            (dissoc :allowed-tiles)))]
+        new-board (distribute-allowed (update board coords #(-> %
+                                                                (assoc :tile-type new-type)
+                                                                (dissoc :allowed-tiles)))
+                                      coords)]
     (println "updating" coords "to" new-type)
     (assoc state :map new-board)))
 
